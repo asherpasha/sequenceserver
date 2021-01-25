@@ -54,3 +54,5 @@ pkg
 .gems/*
 Gemfile.lock
 node_modules
+
+.idea
