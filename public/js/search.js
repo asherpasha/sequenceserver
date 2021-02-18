@@ -209,6 +209,23 @@ var Form = React.createClass({
         return { databases: {}, preDefinedOpts: {} };
     },
 
+    updateCookie: function(newSequence) {
+
+        var currentSequence=document.cookie.toString().trim(";").replace(/sequence=/g, '').split(",");
+        var limit=10;
+        if (!currentSequence.includes(newSequence)){
+            
+            currentSequence.push(newSequence);
+            if (currentSequence.length>limit){
+                for (var i=0;i<currentSequence.length-limit;i++){
+                    currentSequence.splice(-1,1)
+                }
+            }
+            document.cookie="sequence="+currentSequence.join(",");
+        }
+        return;
+    },
+
     componentDidMount: function () {
         /* Fetch data to initialise the search interface from the server. These
          * include list of databases to search against, advanced options to
@@ -235,6 +252,8 @@ var Form = React.createClass({
              */
             if (data['query']) {
                 this.refs.query.value(data['query']);
+                //document.cookie = "sequence=" +data['query']+ ";"
+                this.updateCookie(data['query']);
             }
         }.bind(this));
 
@@ -420,7 +439,25 @@ var Query = React.createClass({
         return $(this.refs.controls.getDOMNode());
     },
 
+    getCookie:function (cname) {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for(var i = 0; i <ca.length; i++) {
+          var c = ca[i];
+          while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+          }
+          if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length).split(",");
+          }
+        }
+        return [];
+    },
+
     handleInput: function (evt) {
+        //console.log(evt.target.value);
+        //console.log(this.getCookie("sequence"));
         this.value(evt.target.value);
     },
 
@@ -567,6 +604,12 @@ var Query = React.createClass({
                         spellCheck="false" autoFocus="true"
                         onChange={this.handleInput}>
                     </textarea>
+                    <div className="panel panel-default" style={{height: '50px',marginTop:'8px'}}>
+                    <div className="panel-heading">
+                        <h4 style={{display: 'inline'}}>Suggestions</h4> &nbsp;&nbsp;                      
+                    </div>
+                    <ul id="autocomplete-results"></ul>
+                    </div>                  
                 </div>
                 <div
                     className="hidden"
@@ -598,6 +641,41 @@ var Query = React.createClass({
             this._type = type;
             this.notify(type);
             this.props.onSequenceTypeChanged(type);
+        }
+
+        // variables
+        var cookies = this.getCookie("sequence");
+        // functions
+        function autocomplete(val) {
+            var cookies_return = [];
+            // search for matches
+            for (i = 0; i < cookies.length; i++) {
+                if (val === cookies[i].slice(0, val.length)) {
+                cookies_return.push(cookies[i]);
+                }
+                // limit to top 3 matches
+                if (cookies_return.length>2){
+                    break;
+                }
+            }
+            return cookies_return;
+        }
+
+        // input in textarea
+        input_val = this.value(); 
+        autocomplete_results = document.getElementById("autocomplete-results");      
+        if (input_val.length > 0 && autocomplete_results!=null) {
+            var suggestion_list = [];          
+            autocomplete_results.innerHTML = '';
+            suggestion_list = autocomplete(input_val);
+            for (i = 0; i < suggestion_list.length; i++) {
+            autocomplete_results.innerHTML += '<li>' + suggestion_list[i] + '</li>';
+            }
+            autocomplete_results.style.display = 'block';
+            autocomplete_results.style.color='#1b557a';
+        } else {
+            suggestion_list = [];
+            autocomplete_results.innerHTML = '';
         }
     }
 });
