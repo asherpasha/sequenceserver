@@ -18,10 +18,12 @@ if (performance.navigation.type == performance.navigation.TYPE_RELOAD) {
 var Page = React.createClass({
     render: function () {
         return (
+
             <div>
                 <DnD ref="dnd"/>
                 <Form ref="form"/>
             </div>
+
         );
     },
 
@@ -209,23 +211,6 @@ var Form = React.createClass({
         return { databases: {}, preDefinedOpts: {} };
     },
 
-    updateCookie: function(newSequence) {
-
-        var currentSequence=document.cookie.toString().trim(";").replace(/sequence=/g, '').split(",");
-        var limit=10;
-        if (!currentSequence.includes(newSequence)){
-            
-            currentSequence.push(newSequence);
-            if (currentSequence.length>limit){
-                for (var i=0;i<currentSequence.length-limit;i++){
-                    currentSequence.splice(-1,1)
-                }
-            }
-            document.cookie="sequence="+currentSequence.join(",");
-        }
-        return;
-    },
-
     componentDidMount: function () {
         /* Fetch data to initialise the search interface from the server. These
          * include list of databases to search against, advanced options to
@@ -253,7 +238,7 @@ var Form = React.createClass({
             if (data['query']) {
                 this.refs.query.value(data['query']);
                 //document.cookie = "sequence=" +data['query']+ ";"
-                this.updateCookie(data['query']);
+                //this.updateCookie(data['query']);
             }
         }.bind(this));
 
@@ -583,6 +568,13 @@ var Query = React.createClass({
 
     getInitialState: function () {
         var input_sequence = $('input#input_sequence').val() || '';
+        var cookie=this.getCookie("sequence");
+        for (let i=0;i<cookie.length;i++){
+            if (cookie[i]){
+                input_sequence=cookie[i];
+                break;
+            }
+        }
         return {
             value: input_sequence
         };
@@ -595,6 +587,7 @@ var Query = React.createClass({
                 className="col-md-12">
                 <div
                     className="sequence">
+                    <div className="autofill" data-placeholder="">
                     <textarea
                         id="sequence" ref="textarea"
                         className="form-control text-monospace"
@@ -602,14 +595,11 @@ var Query = React.createClass({
                         placeholder="Paste query sequence(s) or drag file
                         containing query sequence(s) in FASTA format here ..."
                         spellCheck="false" autoFocus="true"
-                        onChange={this.handleInput}>
+                        onChange={this.handleInput}
+                        onKeyDown={this.handleKeyDown}>
                     </textarea>
-                    <div className="panel panel-default" style={{height: '50px',marginTop:'8px'}}>
-                    <div className="panel-heading">
-                        <h4 style={{display: 'inline'}}>Suggestions</h4> &nbsp;&nbsp;                      
                     </div>
-                    <ul id="autocomplete-results"></ul>
-                    </div>                  
+                                     
                 </div>
                 <div
                     className="hidden"
@@ -634,6 +624,25 @@ var Query = React.createClass({
         });
     },
 
+    handleKeyDown: function(e) {
+        if (e.key=='Tab' && this.suggestion_list && this.suggestion_list[0]!=undefined) {      
+          document.getElementById("sequence").value = this.suggestion_list[0];
+        }
+    },
+    autocomplete: function(val) {
+        var cookies = this.getCookie("sequence");
+        var cookies_return = [];
+        // search for matches
+        for (i = 0; i < cookies.length; i++) {
+            if (val === cookies[i].slice(0, val.length)) {
+            cookies_return.push(cookies[i]);
+            }
+            if (cookies_return.length>2){
+                break;
+            }
+        }
+        return cookies_return;
+    },
     componentDidUpdate: function () {
         this.hideShowButton();
         var type = this.type();
@@ -643,40 +652,23 @@ var Query = React.createClass({
             this.props.onSequenceTypeChanged(type);
         }
 
-        // variables
-        var cookies = this.getCookie("sequence");
-        // functions
-        function autocomplete(val) {
-            var cookies_return = [];
-            // search for matches
-            for (i = 0; i < cookies.length; i++) {
-                if (val === cookies[i].slice(0, val.length)) {
-                cookies_return.push(cookies[i]);
-                }
-                // limit to top 3 matches
-                if (cookies_return.length>2){
-                    break;
-                }
-            }
-            return cookies_return;
-        }
-
         // input in textarea
-        input_val = this.value(); 
-        autocomplete_results = document.getElementById("autocomplete-results");      
-        if (input_val.length > 0 && autocomplete_results!=null) {
-            var suggestion_list = [];          
-            autocomplete_results.innerHTML = '';
-            suggestion_list = autocomplete(input_val);
-            for (i = 0; i < suggestion_list.length; i++) {
-            autocomplete_results.innerHTML += '<li>' + suggestion_list[i] + '</li>';
+        input_val = this.value();   
+        var data=document.getElementsByClassName('autofill')[0]; 
+        if (input_val.length>0) {
+
+            this.suggestion_list = this.autocomplete(input_val);           
+            if (this.suggestion_list.length>0){               
+                data.setAttribute('data-placeholder',this.suggestion_list[0]);
+            } else{
+                data.setAttribute('data-placeholder','');
             }
-            autocomplete_results.style.display = 'block';
-            autocomplete_results.style.color='#1b557a';
         } else {
-            suggestion_list = [];
-            autocomplete_results.innerHTML = '';
+            this.suggestion_list = [];
+            data.setAttribute('data-placeholder','');
         }
+        
+            
     }
 });
 
@@ -1007,6 +999,42 @@ var SearchButton = React.createClass({
         };
     },
 
+    getCookie:function (cname) {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for(var i = 0; i <ca.length; i++) {
+          var c = ca[i];
+          while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+          }
+          if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length).split(",");
+          }
+        }
+        return [];
+    },
+
+    updateCookie: function() {
+        var newSequence=document.getElementById("sequence").value;
+        var currentSequence=this.getCookie("sequence");
+        
+        var expiration="expires=Friday, December 31, 9999 at 7:00:00 AM;path=/;SameSite=Lax";
+        var limit=10;
+        if (!currentSequence.includes(newSequence)){
+            
+            currentSequence.push(newSequence);
+            if (currentSequence.length>limit){
+                for (var i=0;i<currentSequence.length-limit;i++){
+                    currentSequence.splice(-1,1)
+                }
+            }
+            document.cookie="sequence="+currentSequence.join(",")+";"+expiration;
+        }
+   
+        return;
+    },
+
     render: function () {
         var methods = this.state.methods;
         var method = methods[0];
@@ -1021,7 +1049,7 @@ var SearchButton = React.createClass({
                             onMouseOver={this.showTooltip} onMouseOut={this.hideTooltip}>
                             <button
                                 type="submit" className="btn btn-primary form-control text-uppercase"
-                                id="method" ref="submitButton" name="method" value={method} disabled={!method}>
+                                id="method" ref="submitButton" name="method" value={method} disabled={!method} onClick={this.updateCookie}>
                                 {this.decorate(method || 'blast')}
                             </button>
                             {
