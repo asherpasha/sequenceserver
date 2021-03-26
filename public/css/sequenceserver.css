@@ -22,7 +22,7 @@ body {
  */
 a:hover, .btn-link:hover {
   text-decoration: none;
-  color: #c74f14;
+  color: #c74f14#99cc00/*#c74f14*/;
 }
 
 a {
@@ -30,7 +30,7 @@ a {
 }
 
 label:hover {
-  color: #c74f14;
+  color: #99cc00/*#c74f14*/;
 }
 
 .yellow-background {
@@ -91,7 +91,7 @@ a.disabled:hover,
 .navbar {
   margin-bottom: 0;
   border-radius: 0;
-  border-bottom: 1px solid #c74f14;
+  border-bottom: 1px solid #99cc00/*#c74f14*/;
 }
 .navbar-brand {
   height: auto;
@@ -120,7 +120,7 @@ a.disabled:hover,
  */
 /* Hit header styling */
 .section-header {
-  border-bottom: 1px solid  #c74f14;
+  border-bottom: 1px solid  #99cc00/*#c74f14*/;
   padding-left: 1px;
   display: table;
   width: 100%;
@@ -156,7 +156,7 @@ a.disabled:hover,
 .panel .panel-heading {
   padding: 0;
   background-color: inherit;
-  border-bottom: 1px solid #c74f14;
+  border-bottom: 1px solid #99cc00 /*#c74f14*/;
 }
 .panel .panel-heading h4 {
   margin: 0;
@@ -263,15 +263,15 @@ td.nowrap-ellipsis {
  */
 .nav.hover-reset>li>a:hover {
   background-color: inherit;
-  color: #c74f14;
+  color: #99cc00/*#c74f14*/;
 }
 .nav.focus-reset>li>a:focus {
   background-color: inherit;
-  color: #c74f14;
+  color: #99cc00/*#c74f14*/;
 }
 .nav.active-bold>.active>a {
   font-weight: bold;
-  color: #c74f14;
+  color: #99cc00/*#c74f14*/;
 }
 
 /**
@@ -522,7 +522,7 @@ input[type=checkbox] {
 }
 /* higlight when hit is selected */
 .glow {
-  border-left: 2px solid #c74f14;
+  border-left: 2px solid #99cc00/*#c74f14*/;
 }
 
 .downloads a {
@@ -535,7 +535,7 @@ input[type=checkbox] {
 }
 /* CSS class for vertical line separating the hit links */
 .line {
-  color: #c74f14;
+  color: #99cc00/*#c74f14*/;
   margin: 0 5px 0 5px;
 }
 /* override bootstrap focus color in the text field of the search page */
