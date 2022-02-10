@@ -555,6 +555,15 @@ var Query = React.createClass({
 
             this.notification_timeout = setTimeout(function () {
                 $('.notifications .active').hide('drop', {direction: 'up'}).removeClass('active');
+                let db;
+                let dbList = document.querySelectorAll('.database span');
+                for (var i = 0;i < dbList.length;i++){
+                    db = dbList[i].textContent;
+                    if (type.includes(db.trim().toLowerCase())){
+                        dbList[i].closest('label').querySelector('input').click();
+                        break;
+                    }
+                }
             }, 5000);
 
             if (type === 'mixed') {
@@ -842,7 +851,6 @@ var Databases = React.createClass({
             var selectors = this.props.preSelectedDbs.map(db => `input[value=${db.id}]`);
             $(...selectors).prop('checked',true);
             this.handleClick(this.props.preSelectedDbs[0]);
-            this.props.preSelectedDbs = null;
         }
         this.props.onDatabaseTypeChanged(this.state.type);
     }

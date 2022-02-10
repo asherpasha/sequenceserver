@@ -583,6 +583,7 @@ input[type=checkbox] {
 
 .autofill::after
 {
+  word-wrap: break-word;
   position: absolute;
   left: 13px;
   top: 7px;
@@ -598,4 +599,6 @@ input[type=checkbox] {
     Courier,
     monospace;
   font-size: 12px;
+  display: inline-block;
+  width: 107vh;
 }
