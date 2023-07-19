@@ -438,6 +438,22 @@ var Query = React.createClass({
         return $(this.refs.controls.getDOMNode());
     },
 
+    getCookie:function (cname) {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for(var i = 0; i <ca.length; i++) {
+          var c = ca[i];
+          while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+          }
+          if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length).split(",");
+          }
+        }
+        return [];
+    },
+
     handleInput: function (evt) {
         this.value(evt.target.value);
     },
@@ -564,6 +580,13 @@ var Query = React.createClass({
 
     getInitialState: function () {
         var input_sequence = $('input#input_sequence').val() || '';
+        var cookie=this.getCookie("sequence");
+        for (let i=0;i<cookie.length;i++){
+            if (cookie[i]){
+                input_sequence=cookie[i];
+                break;
+            }
+        }
         return {
             value: input_sequence
         };
@@ -576,6 +599,7 @@ var Query = React.createClass({
                 className="col-md-12">
                 <div
                     className="sequence">
+                    <div className="autofill" data-placeholder="">
                     <textarea
                         id="sequence" ref="textarea"
                         className="form-control text-monospace"
@@ -583,7 +607,8 @@ var Query = React.createClass({
                         placeholder="Paste query sequence(s) or drag file
                         containing query sequence(s) in FASTA format here ..."
                         spellCheck="false" autoFocus="true"
-                        onChange={this.handleInput}>
+                        onChange={this.handleInput}
+                        onKeyDown={this.handleKeyDown}>
                     </textarea>
                 </div>
                 <div
@@ -609,6 +634,25 @@ var Query = React.createClass({
         });
     },
 
+    handleKeyDown: function(e) {
+        if (e.key=='Tab' && this.suggestion_list && this.suggestion_list[0]!=undefined) {
+          document.getElementById("sequence").value = this.suggestion_list[0];
+        }
+    },
+    autocomplete: function(val) {
+        var cookies = this.getCookie("sequence");
+        var cookies_return = [];
+        // search for matches
+        for (i = 0; i < cookies.length; i++) {
+            if (val === cookies[i].slice(0, val.length)) {
+            cookies_return.push(cookies[i]);
+            }
+            if (cookies_return.length>2){
+                break;
+            }
+        }
+        return cookies_return;
+    },
     componentDidUpdate: function () {
         this.hideShowButton();
         var type = this.type();
@@ -616,6 +660,22 @@ var Query = React.createClass({
             this._type = type;
             this.notify(type);
             this.props.onSequenceTypeChanged(type);
+        }
+
+        // input in textarea
+        input_val = this.value();
+        var data=document.getElementsByClassName('autofill')[0];
+        if (input_val.length>0) {
+
+            this.suggestion_list = this.autocomplete(input_val);
+            if (this.suggestion_list.length>0){
+                data.setAttribute('data-placeholder',this.suggestion_list[0]);
+            } else {
+                data.setAttribute('data-placeholder','');
+            }
+        } else {
+            this.suggestion_list = [];
+            data.setAttribute('data-placeholder','');
         }
     }
 });
@@ -946,6 +1006,42 @@ var SearchButton = React.createClass({
             hasQuery: false,
             hasDatabases: false
         };
+    },
+
+    getCookie:function (cname) {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for(var i = 0; i <ca.length; i++) {
+          var c = ca[i];
+          while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+          }
+          if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length).split(",");
+          }
+        }
+        return [];
+    },
+
+    updateCookie: function() {
+        var newSequence=document.getElementById("sequence").value;
+        var currentSequence=this.getCookie("sequence");
+
+        var expiration="expires=Friday, December 31, 9999 at 7:00:00 AM;path=/;SameSite=Lax";
+        var limit=10;
+        if (!currentSequence.includes(newSequence)){
+
+            currentSequence.push(newSequence);
+            if (currentSequence.length>limit){
+                for (var i=0;i<currentSequence.length-limit;i++){
+                    currentSequence.splice(-1,1)
+                }
+            }
+            document.cookie="sequence="+currentSequence.join(",")+";"+expiration;
+        }
+
+        return;
     },
 
     render: function () {

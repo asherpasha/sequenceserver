@@ -24,7 +24,7 @@ body {
 a:hover,
 .btn-link:hover {
   text-decoration: none;
-  color: #c74f14;
+  color: #ddd;
 }
 
 a {
@@ -32,7 +32,7 @@ a {
 }
 
 label:hover {
-  color: #c74f14;
+  color: #ddd;
 }
 
 .yellow-background {
@@ -98,7 +98,7 @@ a.disabled:hover,
 .navbar {
   margin-bottom: 0;
   border-radius: 0;
-  border-bottom: 1px solid #c74f14;
+  border-bottom: 1px solid #ddd;
 }
 
 .navbar-brand {
@@ -131,7 +131,7 @@ a.disabled:hover,
 
 /* Hit header styling */
 .section-header {
-  border-bottom: 1px solid  #c74f14;
+  border-bottom: 1px solid  #ddd;
   padding-left: 1px;
   display: table;
   width: 100%;
@@ -174,7 +174,7 @@ a.disabled:hover,
 .panel .panel-heading {
   padding: 0;
   background-color: inherit;
-  border-bottom: 1px solid #c74f14;
+  border-bottom: 1px solid #ddd;
 }
 
 .panel .panel-heading h4 {
@@ -289,17 +289,17 @@ td.nowrap-ellipsis {
  */
 .nav.hover-reset > li > a:hover {
   background-color: inherit;
-  color: #c74f14;
+  color: #ddd;
 }
 
 .nav.focus-reset > li > a:focus {
   background-color: inherit;
-  color: #c74f14;
+  color: #ddd;
 }
 
 .nav.active-bold > .active > a {
   font-weight: bold;
-  color: #c74f14;
+  color: #ddd;
 }
 
 /**
@@ -576,7 +576,7 @@ input[type=checkbox] {
 
 /* higlight when hit is selected */
 .glow {
-  border-left: 2px solid #c74f14;
+  border-left: 2px solid #ddd;
 }
 
 .downloads a {
@@ -591,7 +591,7 @@ input[type=checkbox] {
 
 /* CSS class for vertical line separating the hit links */
 .line {
-  color: #c74f14;
+  color: #ddd;
   margin: 0 5px 0 5px;
 }
 
@@ -620,4 +620,44 @@ input[type=checkbox] {
 /* CSS class to facilitate the hit header wrapping */
 .hit-header {
   display: table-cell;
+}
+
+.autofill
+{
+  position: relative;
+  border-color: #1b557a;
+  /**
+  border: 1px solid gray;
+  box-shadow: rgba(0,0,0,0.4) 2px 2px 2px inset;
+  padding: 3px;
+  **/
+  background-color: white;
+}
+.autofill > textarea
+{
+  position: relative;
+  /*z-index: 1;*/
+  /*border: none;*/
+  background-color: transparent;
+  box-shadow: none;
+  width: 100%;
+}
+
+.autofill::after
+{
+  position: absolute;
+  left: 13px;
+  top: 7px;
+  content: attr(data-placeholder);
+  pointer-events: none;
+  opacity: 0.5;
+  /*z-index: 1;*/
+  font-family:
+    "SFMono-Regular",
+    Consolas,
+    "Liberation Mono",
+    Menlo,
+    Courier,
+    monospace;
+  font-size: 12px;
 }

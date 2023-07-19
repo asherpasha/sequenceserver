@@ -91,6 +91,72 @@ export default React.createClass({
  */
 var HitsTable = React.createClass({
     mixins: [Utils],
+    getBARLink: function(hit){
+        var locus=hit.id;
+        var newid;
+        var barURL='#Query_' + this.props.query.number + '_hit_' + hit.number;
+        if (locus.includes('Bradi')){
+            newid=locus.match(/[^.]+/);
+            barURL='http://bar.utoronto.ca/efp_brachypodium/cgi-bin/efpWeb.cgi?dataSource=Brachypodium_Atlas&modeInput=Absolute&primaryGene='+newid;
+        } else if (locus.includes('GRMZM')){
+            newid=locus.match(/[^_]+/);
+            barURL='http://bar.utoronto.ca/eplant_maize/?ActiveSpecies=Zea%20mays&Genes='+newid;
+        } else if (locus.includes('Potri')){
+            newid=locus.match(/[^.]*.[^.]*/);
+            barURL='http://bar.utoronto.ca/eplant_poplar/?ActiveSpecies=Populus%20trichocarpa&Genes='+newid;
+        } else if (locus.includes('Solyc')){
+            newid=locus.match(/[^.]+/);
+            barURL='http://bar.utoronto.ca/eplant_tomato/?ActiveSpecies=Solanum%20lycopersicum&Gene='+newid;
+        } else if (locus.includes('Csa')){
+            newid=locus.match(/[^.]+/);
+            barURL='http://bar.utoronto.ca/eplant_camelina/?ActiveSpecies=Camelina%20sativa&Genes='+newid;
+        } else if (locus.includes('Glyma')){
+            newid=locus.match(/[^.]*.[^.]*/);
+            barURL='http://bar.utoronto.ca/eplant_soybean/?ActiveSpecies=Glycine%20max&Genes='+newid;
+        } else if (locus.includes('PGSC')){
+            newid=locus;
+            barURL='http://bar.utoronto.ca/eplant_potato/?ActiveSpecies=Solanum%20tuberosum&Genes='+newid;
+        } else if (locus.includes('HORVU')){
+            newid=locus.match(/[^.]+/);
+            barURL='http://bar.utoronto.ca/eplant_barley/?ActiveSpecies=Hordeum%20vulgare&Genes='+newid;
+        } else if (locus.includes('Medtr')){
+            newid=locus.match(/[^.]+/);
+            barURL='http://bar.utoronto.ca/eplant_medicago/?ActiveSpecies=Medicago%20truncatula&Genes='+newid;
+        } else if (locus.includes('Eucgr')){
+            newid=locus.match(/[^.]*.[^.]*/);
+            barURL='http://bar.utoronto.ca/eplant_eucalyptus/?ActiveSpecies=Eucalyptus%20grandis&Genes='+newid;
+        } else if (locus.includes('LOC_Os')){
+            newid=locus.match(/[^.]+/);
+            barURL='http://bar.utoronto.ca/eplant_rice/?ActiveSpecies=Oryza%20sativa&Genes='+newid;
+        } else if (locus.includes('Sapur')){
+            newid=locus.match(/[^.]*.[^.]*/);
+            barURL='http://bar.utoronto.ca/eplant_willow/?ActiveSpecies=Salix%20purpurea&Genes='+newid;
+        } else if (locus.includes('HanXRQ')){
+            newid=locus;
+            barURL='http://bar.utoronto.ca/eplant_sunflower/?ActiveSpecies=Helianthus%20annuus&Genes='+newid;
+        } else if (locus.includes('AGQN')){
+            newid=locus;
+            barURL='http://bar.utoronto.ca/eplant_cannabis/?ActiveSpecies=Cannabis%20sativa&Gene='+newid;
+        } else if (locus.includes('Traes')){
+            newid=locus.match(/[^.]+/);
+            barURL='http://bar.utoronto.ca/eplant_wheat/?ActiveSpecies=Triticum%20aestivum&Genes='+newid;
+        } else if (locus.includes('Sh')){
+            newid=locus;
+            barURL='http://bar.utoronto.ca/eplant_sugarcane/?ActiveSpecies=Saccharum%20R570&Genes='+newid;
+        } else if (locus.includes('VIT')){
+            newid=locus.match(/[^.]+/);
+            barURL='http://bar.utoronto.ca/efp_grape/cgi-bin/efpWeb.cgi?dataSource=grape_developmental&modeINput=Absolute&primaryGene='+newid;
+        } else if (locus.includes('Thhalv')){
+            if (locus.slice(-2)!='.g'){
+                newid=locus+'.g';
+            } else {
+                newid=locus;
+            }
+            barURL='http://bar.utoronto.ca/efp_eutrema/cgi-bin/efpWeb.cgi?dataSource=Eutrema&modeINput=Absolute&primaryGene='+newid;
+        }
+
+        return barURL;
+    },
     render: function () {
         var hasName = _.every(this.props.query.hits, function(hit) {
             return hit.sciname !== '';
@@ -134,7 +200,7 @@ var HitsTable = React.createClass({
                                             <td className="nowrap-ellipsis"
                                                 title={`${hit.id} ${hit.title}`}
                                                 data-toggle="tooltip" data-placement="left">
-                                                <a href={'#Query_' + this.props.query.number + '_hit_' + hit.number}
+                                                <a href={this.getBARLink(hit)}
                                                     className="btn-link">{hit.id} {hit.title}</a>
                                             </td>
                                             {hasName &&
