@@ -610,6 +610,7 @@ var Query = React.createClass({
                         onChange={this.handleInput}
                         onKeyDown={this.handleKeyDown}>
                     </textarea>
+                    </div>
                 </div>
                 <div
                     className="hidden"
@@ -670,13 +671,15 @@ var Query = React.createClass({
             this.suggestion_list = this.autocomplete(input_val);
             if (this.suggestion_list.length>0){
                 data.setAttribute('data-placeholder',this.suggestion_list[0]);
-            } else {
+            } else{
                 data.setAttribute('data-placeholder','');
             }
         } else {
             this.suggestion_list = [];
             data.setAttribute('data-placeholder','');
         }
+
+
     }
 });
 
