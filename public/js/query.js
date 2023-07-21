@@ -90,72 +90,122 @@ export default React.createClass({
  * Renders summary of all hits per query in a tabular form.
  */
 var HitsTable = React.createClass({
+    getInitialState: function () {
+        return {
+            tools:{}
+        };
+    },
     mixins: [Utils],
+
+    loadBarToolsInfo:function() {
+        $.getJSON(`../barTools.json`, function(data) {
+            this.setState({
+                tools:data
+            });
+        }.bind(this));
+
+    },
+
     getBARLink: function(hit){
         var locus=hit.id;
         var newid;
-        var barURL='#Query_' + this.props.query.number + '_hit_' + hit.number;
+        var barURL=[];
+        var species=null;
+
+        const postfix= {
+            'eplant':'&Genes=',
+            'efp':'&modeInput=Absolute&primaryGene='
+        };
+        const barTools=this.state.tools;
+        if (Object.keys(barTools).length===0){
+            return []
+        }
         if (locus.includes('Bradi')){
             newid=locus.match(/[^.]+/);
-            barURL='http://bar.utoronto.ca/efp_brachypodium/cgi-bin/efpWeb.cgi?dataSource=Brachypodium_Atlas&modeInput=Absolute&primaryGene='+newid;
+            species='Brachypodium_distachyon'
         } else if (locus.includes('GRMZM')){
             newid=locus.match(/[^_]+/);
-            barURL='http://bar.utoronto.ca/eplant_maize/?ActiveSpecies=Zea%20mays&Genes='+newid;
+            species='Zea_mays'
+            barURL=[`${barTools[species].eplant}${postfix.eplant}${newid}`];
+        } else if (locus.includes('zm')){
+            newid=locus.match(/[^_]+/);
+            species='Zea_mays';
+            barURL=[`${barTools[species].efp}${postfix.efp}${newid}`];
         } else if (locus.includes('Potri')){
             newid=locus.match(/[^.]*.[^.]*/);
-            barURL='http://bar.utoronto.ca/eplant_poplar/?ActiveSpecies=Populus%20trichocarpa&Genes='+newid;
+            species='Populus_trichocarpa';
         } else if (locus.includes('Solyc')){
-            newid=locus.match(/[^.]+/);
-            barURL='http://bar.utoronto.ca/eplant_tomato/?ActiveSpecies=Solanum%20lycopersicum&Gene='+newid;
+            newid=locus.match(/[^.]+/); 
+            species='Solanum_lycopersicum' ;
         } else if (locus.includes('Csa')){
             newid=locus.match(/[^.]+/);
-            barURL='http://bar.utoronto.ca/eplant_camelina/?ActiveSpecies=Camelina%20sativa&Genes='+newid;
+            species='Camelina_sativa' ;
         } else if (locus.includes('Glyma')){
             newid=locus.match(/[^.]*.[^.]*/);
-            barURL='http://bar.utoronto.ca/eplant_soybean/?ActiveSpecies=Glycine%20max&Genes='+newid;
+            species='Glycine_max';
         } else if (locus.includes('PGSC')){
             newid=locus;
-            barURL='http://bar.utoronto.ca/eplant_potato/?ActiveSpecies=Solanum%20tuberosum&Genes='+newid;
+            species='Solanum_tuberosum'
         } else if (locus.includes('HORVU')){
             newid=locus.match(/[^.]+/);
-            barURL='http://bar.utoronto.ca/eplant_barley/?ActiveSpecies=Hordeum%20vulgare&Genes='+newid;
+            species='Hordeum_vulgare';
+            barURL=[`${barTools[species].eplant}${postfix.eplant}${newid}`];
+        } else if (locus.includes('Contig')){
+            newid=locus.match(/[^.]+/);
+            barURL=[`${barTools[species].efp}${postfix.efp}${newid}}`];
+            species='Hordeum_vulgare'
         } else if (locus.includes('Medtr')){
             newid=locus.match(/[^.]+/);
-            barURL='http://bar.utoronto.ca/eplant_medicago/?ActiveSpecies=Medicago%20truncatula&Genes='+newid;
+            species='Medicago_truncatula';
         } else if (locus.includes('Eucgr')){
             newid=locus.match(/[^.]*.[^.]*/);
-            barURL='http://bar.utoronto.ca/eplant_eucalyptus/?ActiveSpecies=Eucalyptus%20grandis&Genes='+newid;
+            species='Eucalyptus_grandis';            
         } else if (locus.includes('LOC_Os')){
             newid=locus.match(/[^.]+/);
-            barURL='http://bar.utoronto.ca/eplant_rice/?ActiveSpecies=Oryza%20sativa&Genes='+newid;
+            species='Oryza_sativa';
         } else if (locus.includes('Sapur')){
             newid=locus.match(/[^.]*.[^.]*/);
-            barURL='http://bar.utoronto.ca/eplant_willow/?ActiveSpecies=Salix%20purpurea&Genes='+newid;
+            species='Salix_purpurea';
         } else if (locus.includes('HanXRQ')){
             newid=locus;
-            barURL='http://bar.utoronto.ca/eplant_sunflower/?ActiveSpecies=Helianthus%20annuus&Genes='+newid;
+            species='Helianthus_annuus';
         } else if (locus.includes('AGQN')){
             newid=locus;
-            barURL='http://bar.utoronto.ca/eplant_cannabis/?ActiveSpecies=Cannabis%20sativa&Gene='+newid;
+            species='Cannabis_sativa';
         } else if (locus.includes('Traes')){
             newid=locus.match(/[^.]+/);
-            barURL='http://bar.utoronto.ca/eplant_wheat/?ActiveSpecies=Triticum%20aestivum&Genes='+newid;
+            species='Triticum_aestivum';
         } else if (locus.includes('Sh')){
             newid=locus;
-            barURL='http://bar.utoronto.ca/eplant_sugarcane/?ActiveSpecies=Saccharum%20R570&Genes='+newid;
+            species='Saccharum'
         } else if (locus.includes('VIT')){
             newid=locus.match(/[^.]+/);
-            barURL='http://bar.utoronto.ca/efp_grape/cgi-bin/efpWeb.cgi?dataSource=grape_developmental&modeINput=Absolute&primaryGene='+newid;
+            species='Vitis'
+        } else if (locus.includes('Ep_')){
+            newid=locus.match(/[^.]+/);
+            species='Euphorbia'
         } else if (locus.includes('Thhalv')){
             if (locus.slice(-2)!='.g'){
                 newid=locus+'.g';
             } else {
                 newid=locus;
             }
-            barURL='http://bar.utoronto.ca/efp_eutrema/cgi-bin/efpWeb.cgi?dataSource=Eutrema&modeINput=Absolute&primaryGene='+newid;
+            species='Eutrema'
+        } else if (locus.includes('AT')) {
+            newid=locus.split('.')[0];
+            species='Arabidopsis_thaliana';
         }
 
+        if (barURL.length===0 && species && species in barTools){
+            for (const [key,url] of Object.entries(barTools[species])) {
+                barURL.push(`${url}${postfix[key]}${newid}`) 
+            }
+        }
+         
         return barURL;
+    },
+    componentDidMount:function(){
+        this.loadBarToolsInfo();
     },
     render: function () {
         var hasName = _.every(this.props.query.hits, function(hit) {
@@ -164,7 +214,7 @@ var HitsTable = React.createClass({
 
         // Width of sequence column is 55% when species name is not shown and
         // query coverage is.
-        var seqwidth = 55;
+        var seqwidth = 45;
         // If we are going to show species name, then reduce the width of
         // sequence column by the width of species column.
         if (hasName) seqwidth -= 15;
@@ -189,18 +239,23 @@ var HitsTable = React.createClass({
                             {!this.props.imported_xml && <th width="15%" className="text-right">Query coverage (%)</th>}
                             <th width="10%" className="text-right">Total score</th>
                             <th width="10%" className="text-right">E value</th>
-                            <th width="10%" className="text-right">Identity (%)</th>
+                            <th width="10%" className="text-right" data-toggle="tooltip"
+                                data-placement="left" title="Total identity of all hsps / total length of all hsps">
+                        Identity (%)
+                            </th>
+                            <th colSpan={2} width="10%" className="text-right">BAR Tools</th>
                         </thead>
                         <tbody>
                             {
                                 _.map(this.props.query.hits, _.bind(function (hit) {
+                                    const barLinks=this.getBARLink(hit);
                                     return (
                                         <tr key={hit.number}>
                                             <td className="text-left">{hit.number + '.'}</td>
                                             <td className="nowrap-ellipsis"
                                                 title={`${hit.id} ${hit.title}`}
                                                 data-toggle="tooltip" data-placement="left">
-                                                <a href={this.getBARLink(hit)}
+                                                <a href={barLinks[0]}
                                                     className="btn-link">{hit.id} {hit.title}</a>
                                             </td>
                                             {hasName &&
@@ -213,6 +268,18 @@ var HitsTable = React.createClass({
                                             <td className="text-right">{hit.total_score}</td>
                                             <td className="text-right">{this.inExponential(hit.hsps[0].evalue)}</td>
                                             <td className="text-right">{this.inPercentage(hit.hsps[0].identity, hit.hsps[0].length)}</td>
+                                            {barLinks.length === 0?
+                                            <td colSpan={2} className="text-center">
+                                                N/A
+                                            </td>
+                                            :barLinks.map((barLink,idx)=>
+                                            barLink.includes('efpWeb')?
+                                                <td colSpan={2/barLinks.length} className="text-center" key={`efp-${idx}`}>
+                                                    <a href={barLink}>eFP</a>
+                                                </td>:<td colSpan={2/barLinks.length} className="text-center" key={`eplant-${idx}`}>
+                                                    <a href={barLink}>ePlant</a>
+                                                </td>
+                                            )}
                                         </tr>
                                     );
                                 }, this))
