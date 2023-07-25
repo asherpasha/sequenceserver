@@ -181,7 +181,7 @@ var HitsTable = React.createClass({
         } else if (locus.includes('VIT')){
             newid=locus.match(/[^.]+/);
             species='Vitis'
-        } else if (locus.includes('DN')){
+        } else if (locus.startsWith('DN')){
             newid=locus.match(/[^.]+/);
             species='Mangosteen'
         } else if (locus.includes('Ep_')){
