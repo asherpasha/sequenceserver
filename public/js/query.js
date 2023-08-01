@@ -87,7 +87,7 @@ export class ReportQuery extends Component {
 export class SearchQueryWidget extends Component {
     constructor(props) {
         super(props);
-        this.sequence = getSequence();
+        this.sequence = this.getSequence();
         this.state = {
             value: this.sequence
         };
@@ -127,7 +127,7 @@ export class SearchQueryWidget extends Component {
             this.props.onSequenceTypeChanged(type);
 
             // input in textarea
-            input_val = this.value();
+            var input_val = this.state.value || '';
             var data=document.getElementsByClassName('autofill')[0];
             if (input_val.length>0) {
 
@@ -361,7 +361,7 @@ export class SearchQueryWidget extends Component {
         var cookies = this.getCookie("sequence");
         var cookies_return = [];
         // search for matches
-        for (i = 0; i < cookies.length; i++) {
+        for (let i = 0; i < cookies.length; i++) {
             if (val === cookies[i].slice(0, val.length)) {
             cookies_return.push(cookies[i]);
             }
@@ -417,15 +417,8 @@ export class SearchQueryWidget extends Component {
 class HitsTable extends Component {
     constructor(props) {
         super(props);
+        this.state = { tools: {} };
     }
-
-    getInitialState() {
-        return {
-            tools:{}
-        };
-    }
-
-    mixins: [Utils],
 
     loadBarToolsInfo() {
         $.getJSON(`../barTools.json`, function(data) {
