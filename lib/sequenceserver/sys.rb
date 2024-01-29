@@ -67,7 +67,7 @@ module SequenceServer
 
       # Now move the temporary file to the given path.
       # TODO: don't we need to explicitly close the temp file here?
-      FileUtils.cp(temp_files[channel], filename)
+      FileUtils.mv(temp_files.delete(channel), filename)
     end
 
     # Read the remaining temp files into memory. For large outputs,

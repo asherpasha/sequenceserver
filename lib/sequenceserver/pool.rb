@@ -42,7 +42,7 @@ class Pool
 
   def shutdown
     @size.times do
-      queue { throw :exit }
+      schedule { throw :exit }
     end
     @pool.map(&:join)
   end

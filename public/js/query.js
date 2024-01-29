@@ -4,7 +4,6 @@ import _ from 'underscore';
 import HitsOverview from './hits_overview';
 import LengthDistribution from './length_distribution'; // length distribution of hits
 import Utils from './utils';
-import { fastqToFasta } from './fastq_to_fasta';
 
 /**
  * Query component displays query defline, graphical overview, length
@@ -66,10 +65,9 @@ export class ReportQuery extends Component {
 
     noHitsJSX() {
         return <div className="section-content">
-            <strong> ****** No BLAST hits found ****** </strong>
+            <strong> ****** No hits found ****** </strong>
         </div>;
     }
-
     render() {
         return (
             <div className="resultn" id={this.domID()}
@@ -104,7 +102,6 @@ export class SearchQueryWidget extends Component {
         this.indicateNormal = this.indicateNormal.bind(this);
         this.type = this.type.bind(this);
         this.guessSequenceType = this.guessSequenceType.bind(this);
-        this.preProcessSequence = this.preProcessSequence.bind(this);
         this.notify = this.notify.bind(this);
 
         this.textareaRef = createRef()
@@ -122,8 +119,6 @@ export class SearchQueryWidget extends Component {
 
     componentDidUpdate() {
         this.hideShowButton();
-        this.preProcessSequence();
-
         var type = this.type();
         if (!type || type !== this._type) {
             this._type = type;
@@ -136,7 +131,7 @@ export class SearchQueryWidget extends Component {
 
     /**
      * Returns query sequence if no argument is provided (or null or undefined
-     * is provided as argument). Otherwise, sets query sequence to the given
+     * is provided as argument). Otherwise, sets query sequenced to the given
      * value and returns `this`.
      *
      * Default/initial state of query sequence is an empty string. Caller must
@@ -244,12 +239,7 @@ export class SearchQueryWidget extends Component {
      * of directly calling this method.
      */
     type() {
-        let sequence = this.value().trim();
-        // FASTQ detected, but we don't know if conversion has succeeded yet
-        // will notify separately if it does
-        if (sequence.startsWith('@') ) { return undefined; }
-
-        var sequences = sequence.split(/>.*/);
+        var sequences = this.value().split(/>.*/);
 
         var type, tmp;
 
@@ -270,16 +260,6 @@ export class SearchQueryWidget extends Component {
         }
 
         return type;
-    }
-
-    preProcessSequence() {
-        var sequence = this.value();
-        var updatedSequence = fastqToFasta(sequence);
-
-        if (sequence !== updatedSequence) {
-            this.value(updatedSequence);
-            this.notify('fastq');
-        }
     }
 
     /**
@@ -309,9 +289,9 @@ export class SearchQueryWidget extends Component {
     }
 
     notify(type) {
-        this.indicateNormal();
         clearTimeout(this.notification_timeout);
-        // $('.notifications .active').hide().removeClass('active');
+        this.indicateNormal();
+        $('.notifications .active').hide().removeClass('active');
 
         if (type) {
             $('#' + type + '-sequence-notification').show('drop', { direction: 'up' }).addClass('active');
@@ -389,7 +369,7 @@ class HitsTable extends Component {
             <div className="table-hit-overview">
                 <h4 className="caption" data-toggle="collapse" data-target={'#Query_' + this.props.query.number + 'HT_' + this.props.query.number}>
                     <i className="fa fa-minus-square-o"></i>&nbsp;
-                    <span>Hit sequences producing significant alignments</span>
+                    <span>Sequences producing significant alignments</span>
                 </h4>
                 <div className="collapsed in" id={'Query_' + this.props.query.number + 'HT_' + this.props.query.number}>
                     <table

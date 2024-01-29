@@ -21,14 +21,14 @@ export class Form extends Component {
         this.useTreeWidget = this.useTreeWidget.bind(this);
         this.determineBlastMethod = this.determineBlastMethod.bind(this);
         this.handleSequenceTypeChanged = this.handleSequenceTypeChanged.bind(this);
-        this.handleDatabaseTypeChanged = this.handleDatabaseTypeChanged.bind(this);
+        this.handleDatabaseTypeChanaged = this.handleDatabaseTypeChanaged.bind(this);
         this.handleAlgoChanged = this.handleAlgoChanged.bind(this);
         this.handleFormSubmission = this.handleFormSubmission.bind(this);
         this.formRef = createRef();
     }
 
     componentDidMount() {
-        /**
+        /** 
         * Fetch data to initialise the search interface from the server. These
         * include list of databases to search against, advanced options to
         * apply when an algorithm is selected, and a query sequence that
@@ -71,7 +71,7 @@ export class Form extends Component {
             }
         });
 
-        // show overlay to create visual feedback on button click
+        // show overlay to create visual feedback on button click 
         $('#method').on('click', () => {
             $('#overlay').css('display', 'block');
         });
@@ -102,7 +102,6 @@ export class Form extends Component {
             }
         });
     }
-
     determineBlastMethod() {
         var database_type = this.databaseType;
         var sequence_type = this.sequenceType;
@@ -147,7 +146,7 @@ export class Form extends Component {
         });
     }
 
-    handleDatabaseTypeChanged(type) {
+    handleDatabaseTypeChanaged(type) {
         this.databaseType = type;
         this.refs.button.setState({
             hasQuery: !this.refs.query.isEmpty(),
@@ -175,27 +174,24 @@ export class Form extends Component {
         return (
             <div className="container">
                 <div id="overlay" style={{ position: 'absolute', top: 0, left: 0, width: '100vw', height: '100vw', background: 'rgba(0, 0, 0, 0.2)', display: 'none', zIndex: 99 }} />
-
-                <div className="notifications" id="notifications">
-                    <FastqNotification />
-                    <NucleotideNotification />
-                    <ProteinNotification />
-                    <MixedNotification />
-                </div>
-
                 <form id="blast" ref={this.formRef} onSubmit={this.handleFormSubmission} className="form-horizontal">
                     <div className="form-group query-container">
                         <SearchQueryWidget ref="query" onSequenceTypeChanged={this.handleSequenceTypeChanged} />
+                    </div>
+                    <div className="notifications" id="notifications">
+                        <NucleotideNotification />
+                        <ProteinNotification />
+                        <MixedNotification />
                     </div>
                     {this.useTreeWidget() ?
                         <DatabasesTree ref="databases"
                             databases={this.state.databases} tree={this.state.tree}
                             preSelectedDbs={this.state.preSelectedDbs}
-                            onDatabaseTypeChanged={this.handleDatabaseTypeChanged} />
+                            onDatabaseTypeChanged={this.handleDatabaseTypeChanaged} />
                         :
                         <Databases ref="databases" databases={this.state.databases}
                             preSelectedDbs={this.state.preSelectedDbs}
-                            onDatabaseTypeChanged={this.handleDatabaseTypeChanged} />
+                            onDatabaseTypeChanged={this.handleDatabaseTypeChanaged} />
                     }
                     <div className="form-group">
                         <Options ref="opts" />
@@ -241,21 +237,6 @@ class NucleotideNotification extends Component {
             <div
                 className="alert-info col-md-6 col-md-offset-3">
                 Detected: nucleotide sequence(s).
-            </div>
-        </div>
-        );
-    }
-}
-
-class FastqNotification extends Component {
-    render() {
-        return (<div
-            className="notification row"
-            id="fastq-sequence-notification"
-            style={{ display: 'none' }}>
-            <div
-                className="alert-info col-md-6 col-md-offset-3">
-                Detected FASTQ and automatically converted to FASTA.
             </div>
         </div>
         );

@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import '../packages/jquery-ui@1.11.4';
 import 'bootstrap';
+import 'webshim';
 
 global.$ = $;
 /**

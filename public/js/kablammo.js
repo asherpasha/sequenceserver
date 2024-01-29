@@ -18,10 +18,6 @@ import * as Helpers from './visualisation_helpers';
  */
 
 class Graph {
-    static canCollapse() {
-        return true;
-    }
-
     static name() {
         return 'Graphical overview of aligning region(s)';
     }

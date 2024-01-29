@@ -9,7 +9,7 @@
 # https://github.com/orgs/community/discussions/25809
 #
 # One can *try* action-validator, but there are false-negatives:
-# (https://github.com/mpalmer/action-validator
+# (https://github.com/mpalmer/action-validator 
 #
 # State does *not* persist between jobs...
 # https://github.com/actions/checkout/issues/19
@@ -34,11 +34,11 @@
         - uses: actions/checkout@v3
         - name: Get BLAST
           working-directory: /opt
-          run: wget -c "https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.14.1/ncbi-blast-2.14.1+-x64-linux.tar.gz" && tar xvf ncbi-blast-*.tar.gz
+          run: wget -c "https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.12.0/ncbi-blast-2.12.0+-x64-linux.tar.gz" && tar xvf ncbi-blast-*.tar.gz
         - name: BLAST PATH
-          run: mkdir /opt/bin && echo "/opt/bin:/opt/ncbi-blast-2.14.1+/bin" >> $GITHUB_PATH
-        - uses: browser-actions/setup-chrome@latest
-        - run: chrome --version
+          run: mkdir /opt/bin && echo "/opt/bin:/opt/ncbi-blast-2.12.0+/bin" >> $GITHUB_PATH
+        - name: Get Chromium
+          run: sudo apt-get update && sudo apt-get install -y chromium-bsu chromium-driver
         - name: Get CodeClimate
           working-directory: /opt
           run: wget -c "https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64" -O bin/cc-test-reporter && chmod +x bin/cc-test-reporter
@@ -47,25 +47,8 @@
           with:
             ruby-version: '3.2'
             bundler-cache: true
-        - name: Install Ruby dependencies
+        - name: Install dependencies
           run: bundle install
-        - name: Setup Node.js
-          uses: actions/setup-node@v3
-          with:
-            node-version: '16'
-        - name: Install NPM Dependencies
-          run: npm install
-        - name: Build JS and CSS assets
-          run: npm run build
-        - name: Check assets were compiled and checked-in
-          continue-on-error: true
-          run: |
-            if git diff --quiet --exit-code -- public; then
-              echo "No changes in 'public' directory."
-            else
-              echo "Changes detected in 'public' directory. Please compile assets locally and commit the changes."
-              exit 1
-            fi
         - name: Create SequenceServer config file
           run: bundle exec bin/sequenceserver -s -d spec/database/v5/sample
         - name: CodeClimate before-build hook
