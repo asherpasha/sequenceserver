@@ -4,6 +4,7 @@ import _ from 'underscore';
 import HSPOverview from './kablammo';
 import downloadFASTA from './download_fasta';
 import AlignmentExporter from './alignment_exporter'; // to download textual alignment
+import HitButtons from 'hit_buttons';
 
 /**
  * Component for each hit. Receives props from Report. Has no state.
@@ -26,13 +27,14 @@ export default class extends Component {
         this.hitLinks = this.hitLinks.bind(this);
         this.viewSequenceButton = this.viewSequenceButton.bind(this);
         this.downloadFASTAButton = this.downloadFASTAButton.bind(this);
+        this.hit_buttons = new HitButtons(this);
     }
     shouldComponentUpdate() {
         return !this.props.hit;
     }
     /**
-         * Returns accession number of the hit sequence.
-         */
+     * Returns accession number of the hit sequence.
+     */
     accession() {
         return this.props.hit.accession;
     }
@@ -141,6 +143,10 @@ export default class extends Component {
             ]);
         }
         btns.push(this.downloadAlignmentButton());
+
+        this.hit_buttons.buttons().forEach((button) => {
+            btns.push(button);
+        });
 
         return (
             <div className="hit-links">

@@ -28,6 +28,10 @@ module SequenceServer
 
       # We don't want Sinatra do setup any loggers for us. We will use our own.
       set :logging, nil
+
+      # Override in config.ru if the instance is served under a subpath
+      # e.g. for example.org/our-sequenceserver set to '/our-sequenceserver'
+      set :root_path_prefix, ''
     end
 
     # See
@@ -51,7 +55,9 @@ module SequenceServer
         frame_options = SequenceServer.config[:frame_options]
         frame_options && { frame_options: frame_options }
       }
+    end
 
+    unless ENV['SEQUENCE_SERVER_COMPRESS_RESPONSES'] == 'false'
       # Serve compressed responses.
       use Rack::Deflater
     end
@@ -105,16 +111,40 @@ module SequenceServer
     # an empty body if the job hasn't finished yet.
     get '/:jid.json' do |jid|
       job = Job.fetch(jid)
+      halt 404, { error: 'Job not found' }.to_json if job.nil?
       halt 202 unless job.done?
-      Report.generate(job).to_json
+
+      report = Report.generate(job)
+      halt 202 unless report.done?
+
+      display_large_result_warning =
+        SequenceServer.config[:large_result_warning_threshold].to_i.positive? &&
+        params[:bypass_file_size_warning] != 'true' &&
+        report.xml_file_size > SequenceServer.config[:large_result_warning_threshold]
+
+      if display_large_result_warning
+        halt 200,
+             {
+               user_warning: 'LARGE_RESULT',
+               download_links: [
+                 { name: 'Standard Tabular Report', url: "download/#{jid}.std_tsv" },
+                 { name: 'Full Tabular Report', url: "/download/#{jid}.full_tsv" },
+                 { name: 'Results in XML', url: "/download/#{jid}.xml" }
+               ]
+             }.to_json
+      end
+
+      report.to_json
     end
 
     # Returns base HTML. Rest happens client-side: polling for and rendering
     # the results.
-    get '/:jid' do
+    get '/:jid' do |jid|
+      job = Job.fetch(jid)
+      halt 404, File.read(File.join(settings.root, 'public/404.html')) if job.nil?
+
       erb :report, layout: true
     end
-
     # @params sequence_ids: whitespace separated list of sequence ids to
     # retrieve
     # @params database_ids: whitespace separated list of database ids to
@@ -144,14 +174,17 @@ module SequenceServer
     # Download BLAST report in various formats.
     get '/download/:jid.:type' do |jid, type|
       job = Job.fetch(jid)
+      halt 404, { error: 'Job not found' }.to_json if job.nil?
       out = BLAST::Formatter.new(job, type)
-      send_file out.file, filename: out.filename, type: out.mime
+      halt 404, { error: 'File not found"' }.to_json unless File.exist?(out.filepath)
+      send_file out.filepath, filename: out.filename, type: out.mime
     end
 
     post '/cloud_share' do
       content_type :json
       request_params = JSON.parse(request.body.read)
       job = Job.fetch(request_params['job_id'])
+      halt 404, { error: 'Job not found' }.to_json if job.nil?
 
       unless job.done?
         status 422
@@ -245,6 +278,7 @@ module SequenceServer
       end
 
       if request.env['HTTP_ACCEPT'].to_s.include?('application/json')
+        status 422
         content_type :json
         error_data.to_json
       else
@@ -255,7 +289,8 @@ module SequenceServer
 
     # Get the query sequences, selected databases, and advanced params used.
     def update_searchdata_from_job(searchdata)
-      job = Job.fetch(params[:job_id])
+      job = fetch_job(params[:job_id])
+      return { error: 'Job not found' }.to_json if job.nil?
       return if job.imported_xml_file
 
       # Only read job.qfile if we are not going to use Database.retrieve.
@@ -276,6 +311,18 @@ module SequenceServer
         searchdata[:options] = searchdata[:options].deep_copy
         searchdata[:options][method]['last search'] = [job.advanced]
       end
+    end
+
+    helpers do
+      def root_path_prefix
+        settings.root_path_prefix.to_s
+      end
+    end
+
+    private
+
+    def fetch_job(job_id)
+      Job.fetch(job_id)
     end
   end
 end
