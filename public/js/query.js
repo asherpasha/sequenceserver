@@ -91,7 +91,7 @@ export class SearchQueryWidget extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            value: this.sequence
+            value: $('input#input_sequence').val() || ''
         };
         this.value = this.value.bind(this);
         this.clear = this.clear.bind(this);
