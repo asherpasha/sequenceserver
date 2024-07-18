@@ -119,6 +119,22 @@ export class SearchQueryWidget extends Component {
         $('body').click(function () {
             $('[data-notifications] [data-role=notification].active').hide('drop', { direction: 'up' }).removeClass('active');
         });
+
+        // input in textarea
+        var input_val = this.state.value || '';
+        var data=document.getElementsByClassName('autofill')[0];
+        if (input_val.length>0) {
+
+            this.suggestion_list = this.autocomplete(input_val);
+            if (this.suggestion_list.length>0){
+                data.setAttribute('data-placeholder',this.suggestion_list[0]);
+            } else{
+                data.setAttribute('data-placeholder','');
+            }
+        } else {
+            this.suggestion_list = [];
+            data.setAttribute('data-placeholder','');
+        }
     }
 
     componentDidUpdate() {
@@ -205,8 +221,57 @@ export class SearchQueryWidget extends Component {
         return $(this.controlsRef.current);
     }
 
+    getCookie(cname) {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for(var i = 0; i <ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) === ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) === 0) {
+                return c.substring(name.length, c.length).split(",");
+            }
+        }
+        return [];
+    }
+
+    getSequence() {
+        var input_sequence = $('input#input_sequence').val() || '';
+        var cookie=this.getCookie('sequence');
+        for (let i=0;i<cookie.length;i++){
+            if (cookie[i]){
+                input_sequence=cookie[i];
+                break;
+            }
+        }
+        return input_sequence;
+    }
+
     handleInput(evt) {
         this.value(evt.target.value);
+    }
+
+    handleKeyDown(e) {
+        if (e.key=='Tab' && this.suggestion_list && this.suggestion_list[0]!=undefined) {
+            document.getElementById("sequence").value = this.suggestion_list[0];
+        }
+    }
+
+    autocomplete(val) {
+        var cookies = this.getCookie("sequence");
+        var cookies_return = [];
+        // search for matches
+        for (let i = 0; i < cookies.length; i++) {
+            if (val === cookies[i].slice(0, val.length)) {
+                cookies_return.push(cookies[i]);
+            }
+            if (cookies_return.length>2){
+                break;
+            }
+        }
+        return cookies_return;
     }
 
     /**
@@ -346,6 +411,7 @@ export class SearchQueryWidget extends Component {
             <div className="relative">
                 <div
                     className="sequence">
+                    <div className="autofill" data-placeholder="">
                     <textarea
                         id="sequence" ref={this.textareaRef}
                         className="block w-full p-4 text-gray-900 border border-gray-300 rounded-l-lg rounded-tr-lg bg-gray-50 text-base text-monospace"
@@ -356,7 +422,9 @@ export class SearchQueryWidget extends Component {
                         containing query sequence(s) in FASTA format here ..."
                         spellCheck="false" autoFocus
                         onChange={this.handleInput}>
+                        onKeyDown={this.handleKeyDown}>
                     </textarea>
+                    </div>
                 </div>
                 <div
                     className="hidden absolute top-2 right-2"
@@ -387,8 +455,124 @@ class HitsTable extends Component {
         this.name = 'Hit sequences producing significant alignments';
         this.collapsePreferences = new CollapsePreferences(this);
         this.state = {
-            collapsed: this.collapsePreferences.preferenceStoredAsCollapsed()
+            collapsed: this.collapsePreferences.preferenceStoredAsCollapsed(),
+            tools: {}
         };
+    }
+
+    loadBarToolsInfo() {
+        $.getJSON(`../barTools.json`, function(data) {
+            this.setState({
+                tools:data
+            });
+        }.bind(this));
+
+    }
+
+    getBARLink(hit) {
+        var locus=hit.id;
+        var newid;
+        var barURL=[];
+        var species=null;
+
+        const postfix= {
+            'eplant':'&Genes=',
+            'efp':'&modeInput=Absolute&primaryGene='
+        };
+        const barTools=this.state.tools;
+        if (Object.keys(barTools).length===0){
+            return []
+        }
+        if (locus.includes('Bradi')){
+            newid=locus.match(/[^.]+/);
+            species='Brachypodium_distachyon'
+        } else if (locus.includes('GRMZM')){
+            newid=locus.match(/[^_]+/);
+            species='Zea_mays'
+            barURL=[`${barTools[species].eplant}${postfix.eplant}${newid}`];
+        } else if (locus.includes('zm')){
+            newid=locus.match(/[^_]+/);
+            species='Zea_mays';
+            barURL=[`${barTools[species].efp}${postfix.efp}${newid}`];
+        } else if (locus.includes('Potri')){
+            newid=locus.match(/[^.]*.[^.]*/);
+            species='Populus_trichocarpa';
+        } else if (locus.includes('Solyc')){
+            newid=locus.match(/[^.]+/);
+            species='Solanum_lycopersicum' ;
+        } else if (locus.includes('Csa')){
+            newid=locus.match(/[^.]+/);
+            species='Camelina_sativa' ;
+        } else if (locus.includes('Glyma')){
+            newid=locus.match(/[^.]*.[^.]*/);
+            species='Glycine_max';
+        } else if (locus.includes('PGSC')){
+            newid=locus;
+            species='Solanum_tuberosum'
+        } else if (locus.includes('HORVU')){
+            newid=locus.match(/[^.]+/);
+            species='Hordeum_vulgare';
+            barURL=[`${barTools[species].eplant}${postfix.eplant}${newid}`];
+        } else if (locus.includes('Contig')){
+            newid=locus.match(/[^.]+/);
+            barURL=[`${barTools[species].efp}${postfix.efp}${newid}}`];
+            species='Hordeum_vulgare'
+        } else if (locus.includes('Medtr')){
+            newid=locus.match(/[^.]+/);
+            species='Medicago_truncatula';
+        } else if (locus.includes('Eucgr')){
+            newid=locus.match(/[^.]*.[^.]*/);
+            species='Eucalyptus_grandis';
+        } else if (locus.includes('LOC_Os')){
+            newid=locus.match(/[^.]+/);
+            species='Oryza_sativa';
+        } else if (locus.includes('Sapur')){
+            newid=locus.match(/[^.]*.[^.]*/);
+            species='Salix_purpurea';
+        } else if (locus.includes('HanXRQ')){
+            newid=locus;
+            species='Helianthus_annuus';
+        } else if (locus.includes('AGQN')){
+            newid=locus;
+            species='Cannabis_sativa';
+        } else if (locus.includes('Traes')){
+            newid=locus.match(/[^.]+/);
+            species='Triticum_aestivum';
+        } else if (locus.includes('Sh')){
+            newid=locus;
+            species='Saccharum'
+        } else if (locus.includes('VIT')){
+            newid=locus.match(/[^.]+/);
+            species='Vitis'
+        } else if (locus.startsWith('DN')){
+            newid=locus.match(/[^.]+/);
+            species='Mangosteen'
+        } else if (locus.includes('Ep_')){
+            newid=locus.match(/[^.]+/);
+            species='Euphorbia'
+        } else if (locus.includes('Thhalv')){
+            if (locus.slice(-2)!='.g'){
+                newid=locus+'.g';
+            } else {
+                newid=locus;
+            }
+            species='Eutrema'
+        } else if (locus.includes('AT')) {
+            newid=locus.split('.')[0];
+            species='Arabidopsis_thaliana';
+        }
+
+        if (barURL.length===0 && species && species in barTools){
+            for (const [key,url] of Object.entries(barTools[species])) {
+                barURL.push(`${url}${postfix[key]}${newid}`)
+            }
+        }
+
+        return barURL;
+    }
+
+    componentDidMount(){
+        this.loadBarToolsInfo();
     }
 
     tableJSX() {
@@ -410,26 +594,28 @@ class HitsTable extends Component {
         return <table
             className="table table-hover table-condensed tabular-view ">
             <thead>
-                <tr>
-                    <th className="text-left">#</th>
-                    <th width={`${seqwidth}%`}>Similar sequences</th>
-                    {hasName && <th width="15%" className="text-left">Species</th>}
-                    {!this.props.imported_xml && <th width="15%" className="text-right">Query coverage (%)</th>}
-                    <th width="10%" className="text-right">Total score</th>
-                    <th width="10%" className="text-right">E value</th>
-                    <th width="10%" className="text-right">Identity (%)</th>
-                </tr>
+            <tr>
+                <th className="text-left">#</th>
+                <th width={`${seqwidth}%`}>Similar sequences</th>
+                {hasName && <th width="15%" className="text-left">Species</th>}
+                {!this.props.imported_xml && <th width="15%" className="text-right">Query coverage (%)</th>}
+                <th width="10%" className="text-right">Total score</th>
+                <th width="10%" className="text-right">E value</th>
+                <th width="10%" className="text-right">Identity (%)</th>
+                <th colSpan={2} width="10%" className="text-right">BAR Tools</th>
+            </tr>
             </thead>
             <tbody>
-                {
-                    _.map(this.props.query.hits, _.bind(function (hit) {
+            {
+                _.map(this.props.query.hits, _.bind(function (hit) {
+                        const barLinks=this.getBARLink(hit);
                         return (
                             <tr key={hit.number}>
                                 <td className="text-left">{hit.number + '.'}</td>
                                 <td className="nowrap-ellipsis"
                                     title={`${hit.id} ${hit.title}`}
                                     data-toggle="tooltip" data-placement="left">
-                                    <a href={'#Query_' + this.props.query.number + '_hit_' + hit.number}
+                                    <a href={barLinks[0]}
                                         className="btn-link">{hit.id} {hit.title}</a>
                                 </td>
                                 {hasName &&
@@ -442,6 +628,18 @@ class HitsTable extends Component {
                                 <td className="text-right">{hit.total_score}</td>
                                 <td className="text-right">{Utils.inExponential(hit.hsps[0].evalue)}</td>
                                 <td className="text-right">{Utils.inPercentage(hit.hsps[0].identity, hit.hsps[0].length)}</td>
+                                {barLinks.length === 0?
+                                    <td colSpan={2} className="text-center">
+                                        N/A
+                                    </td>
+                                    :barLinks.map((barLink,idx)=>
+                                        barLink.includes('efpWeb')?
+                                            <td colSpan={2/barLinks.length} className="text-center" key={`efp-${idx}`}>
+                                                <a href={barLink}>eFP</a>
+                                            </td>:<td colSpan={2/barLinks.length} className="text-center" key={`eplant-${idx}`}>
+                                                <a href={barLink}>ePlant</a>
+                                            </td>
+                                    )}
                             </tr>
                         );
                     }, this))

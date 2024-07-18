@@ -141,6 +141,42 @@ export class SearchButton extends Component {
         }));
     }
 
+    getCookie(cname) {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for(var i = 0; i <ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) === ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) === 0) {
+                return c.substring(name.length, c.length).split(",");
+            }
+        }
+        return [];
+    }
+
+    updateCookie() {
+        var newSequence=document.getElementById("sequence").value;
+        var currentSequence=this.getCookie("sequence");
+
+        var expiration="expires=Friday, December 31, 9999 at 7:00:00 AM;path=/;SameSite=Lax";
+        var limit=10;
+        if (!currentSequence.includes(newSequence)){
+
+            currentSequence.push(newSequence);
+            if (currentSequence.length>limit){
+                for (var i=0;i<currentSequence.length-limit;i++){
+                    currentSequence.splice(-1,1)
+                }
+            }
+            document.cookie="sequence="+currentSequence.join(",")+";"+expiration;
+        }
+
+        return;
+    }
+
     render() {
         var methods = this.state.methods;
         var method = methods[0];

@@ -189,7 +189,7 @@ class Graph {
             .attr('class','bar')
             .attr('width',4)
             .attr('height',this._height)
-            .style('fill','#c74f14');
+            .style('fill','#ddd');
 
         query_line.append('text')
             .attr('dy', '0.75em')

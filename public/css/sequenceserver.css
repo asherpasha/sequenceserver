@@ -23,7 +23,7 @@ body {
 a:hover,
 .btn-link:hover {
   text-decoration: none;
-  color: #c74f14;
+  color: #ddd;
 }
 
 a {
@@ -31,7 +31,7 @@ a {
 }
 
 label:hover {
-  color: #c74f14;
+  color: #ddd;
 }
 
 .yellow-background {
@@ -99,7 +99,7 @@ a.disabled:hover,
 .navbar {
   margin-bottom: 0;
   border-radius: 0;
-  border-bottom: 1px solid #c74f14;
+  border-bottom: 1px solid #ddd;
 }
 
 .navbar-brand {
@@ -132,7 +132,7 @@ a.disabled:hover,
 
 /* Hit header styling */
 .section-header {
-  border-bottom: 1px solid  #c74f14;
+  border-bottom: 1px solid  #ddd;
   padding-left: 1px;
   display: table;
   width: 100%;
@@ -276,17 +276,17 @@ td.nowrap-ellipsis {
  */
 .nav.hover-reset > li > a:hover {
   background-color: inherit;
-  color: #c74f14;
+  color: #ddd;
 }
 
 .nav.focus-reset > li > a:focus {
   background-color: inherit;
-  color: #c74f14;
+  color: #ddd;
 }
 
 .nav.active-bold > .active > a {
   font-weight: bold;
-  color: #c74f14;
+  color: #ddd;
 }
 
 /**
@@ -465,7 +465,7 @@ td.nowrap-ellipsis {
 
 /* higlight when hit is selected */
 .glow {
-  border-left: 2px solid #c74f14;
+  border-left: 2px solid #ddd;
 }
 
 .downloads a {
@@ -484,7 +484,7 @@ td.nowrap-ellipsis {
 
 /* CSS class for vertical line separating the hit links */
 .line {
-  color: #c74f14;
+  color: #ddd;
   margin: 0 5px 0 5px;
 }
 
@@ -524,4 +524,34 @@ td.nowrap-ellipsis {
   padding-bottom: 1em;
   display: flex;
   justify-content: space-between;
+}
+
+.autofill {
+  position: relative;
+  border-color: #1b557a;
+  background-color: white;
+}
+
+.autofill > textarea {
+  position: relative;
+  background-color: transparent;
+  box-shadow: none;
+  width: 100%;
+}
+
+.autofill::after {
+  position: absolute;
+  left: 13px;
+  top: 7px;
+  content: attr(data-placeholder);
+  pointer-events: none;
+  opacity: 0.5;
+  font-family:
+          "SFMono-Regular",
+          Consolas,
+          "Liberation Mono",
+          Menlo,
+          Courier,
+          monospace;
+  font-size: 12px;
 }

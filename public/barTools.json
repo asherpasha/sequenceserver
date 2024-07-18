@@ -1,0 +1,89 @@
+{
+    "Arabidopsis_thaliana":{
+        "eplant":"http://bar.utoronto.ca/eplant/?ActiveSpecies=Arabidopsis%20thaliana",
+        "efp":"http://bar.utoronto.ca/efp/cgi-bin/efpWeb.cgi?dataSource=Developmental_Map"
+    },
+
+    "Brachypodium_distachyon":{
+        "efp":"http://bar.utoronto.ca/efp_brachypodium/cgi-bin/efpWeb.cgi?dataSource=Brachypodium_Atlas"
+    },
+
+    "Zea_mays":{
+        "eplant":"http://bar.utoronto.ca/eplant_maize/?ActiveSpecies=Zea%20mays",
+        "efp":"http://bar.utoronto.ca/efp_maize/cgi-bin/efpWeb.cgi?dataSource=maize_iplant"
+    },
+
+    "Populus_trichocarpa":{
+        "eplant":"http://bar.utoronto.ca/eplant_poplar/?ActiveSpecies=Populus%20trichocarpa",
+        "efp":"http://bar.utoronto.ca/efppop/cgi-bin/efpWeb.cgi?dataSource=Poplar"
+    },
+
+    "Solanum_lycopersicum":{
+        "eplant":"http://bar.utoronto.ca/eplant_tomato/?ActiveSpecies=Solanum%20lycopersicum",
+        "efp":"http://bar.utoronto.ca/efp_tomato/cgi-bin/efpWeb.cgi?dataSource=Rose_Lab_Atlas"
+    },
+
+    "Camelina_sativa":{
+        "eplant":"http://bar.utoronto.ca/eplant_camelina/?ActiveSpecies=Camelina%20sativa"
+    },
+
+    "Glycine_max":{
+        "eplant":"http://bar.utoronto.ca/eplant_soybean/?ActiveSpecies=Glycine%20max",
+        "efp":"http://bar.utoronto.ca/efpsoybean/cgi-bin/efpWeb.cgi?dataSource=soybean"
+    },
+
+    "Solanum_tuberosum":{
+        "eplant":"http://bar.utoronto.ca/eplant_potato/?ActiveSpecies=Solanum%20tuberosum",
+        "efp":"http://bar.utoronto.ca/efp_potato/cgi-bin/efpWeb.cgi?dataSource=Potato_Developmental"
+    },
+
+    "Hordeum_vulgare":{
+        "eplant": "http://bar.utoronto.ca/eplant_barley/?ActiveSpecies=Hordeum%20vulgare",
+        "efp":"http://bar.utoronto.ca/efpbarley/cgi-bin/efpWeb.cgi?dataSource=barley_rma"
+    },
+
+    "Medicago_truncatula":{
+        "eplant":"http://bar.utoronto.ca/eplant_medicago/?ActiveSpecies=Medicago%20truncatula",
+        "efp":"http://bar.utoronto.ca/efpmedicago/cgi-bin/efpWeb.cgi?dataSource=medicago_mas"
+    },
+
+    "Eucalyptus_grandis":{
+        "eplant":"http://bar.utoronto.ca/eplant_eucalyptus/?ActiveSpecies=Eucalyptus%20grandis"
+    },
+
+    "Oryza_sativa":{
+        "eplant":"http://bar.utoronto.ca/eplant_rice/?ActiveSpecies=Oryza%20sativa",
+        "efp":"http://bar.utoronto.ca/efprice/cgi-bin/efpWeb.cgi?dataSource=rice_mas"
+    },
+
+    "Salix_purpurea":{
+        "eplant":"http://bar.utoronto.ca/eplant_willow/?ActiveSpecies=Salix%20purpurea"
+    },
+
+    "Helianthus_annuus":{
+        "eplant":"http://bar.utoronto.ca/eplant_sunflower/?ActiveSpecies=Helianthus%20annuus"
+    },
+
+    "Cannabis_sativa":{
+        "eplant":"http://bar.utoronto.ca/eplant_cannabis/?ActiveSpecies=Cannabis%20sativa",
+        "efp":"http://bar.utoronto.ca/efp_cannabis/cgi-bin/efpWeb.cgi?dataSource=Cannabis_Atlas"
+    },
+
+    "Triticum_aestivum":{
+        "eplant":"http://bar.utoronto.ca/eplant_wheat/?ActiveSpecies=Triticum%20aestivum",
+        "efp":"http://bar.utoronto.ca/efp_wheat/cgi-bin/efpWeb.cgi?dataSource=Developmental_Atlas"
+    },
+
+    "Saccharum":{
+        "eplant":"http://bar.utoronto.ca/eplant_sugarcane/?ActiveSpecies=Saccharum%20R570"
+    },
+
+    "Vitis":{
+        "eplant":"http://bar.utoronto.ca/efp_grape/cgi-bin/efpWeb.cgi?dataSource=grape_developmental"
+    },
+
+    "Eutrema":{
+        "efp":"http://bar.utoronto.ca/efp_eutrema/cgi-bin/efpWeb.cgi?dataSource=Eutrema"
+    }
+
+}

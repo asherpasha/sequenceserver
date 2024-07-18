@@ -200,7 +200,7 @@ class Graph {
             .selectAll('stop')
             .data([
                 {offset: '0%', color: '#000'},
-                {offset: '45%', color: '#c74f14'},
+                {offset: '45%', color: '#ddd'},
                 {offset: '100%', color: '#f6bea2'}
             ])
             .enter()
