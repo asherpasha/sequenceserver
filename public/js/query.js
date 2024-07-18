@@ -91,7 +91,7 @@ export class SearchQueryWidget extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            value: $('input#input_sequence').val() || ''
+            value: this.sequence
         };
         this.value = this.value.bind(this);
         this.clear = this.clear.bind(this);
@@ -147,6 +147,22 @@ export class SearchQueryWidget extends Component {
             this._type = type;
             this.notify(type);
             this.props.onSequenceTypeChanged(type);
+
+            // input in textarea
+            var input_val = this.state.value || '';
+            var data=document.getElementsByClassName('autofill')[0];
+            if (input_val.length>0) {
+
+                this.suggestion_list = this.autocomplete(input_val);
+                if (this.suggestion_list.length>0){
+                    data.setAttribute('data-placeholder',this.suggestion_list[0]);
+                } else{
+                    data.setAttribute('data-placeholder','');
+                }
+            } else {
+                this.suggestion_list = [];
+                data.setAttribute('data-placeholder','');
+            }
         }
     }
 
