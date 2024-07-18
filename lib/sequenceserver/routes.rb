@@ -33,7 +33,7 @@ module SequenceServer
 
       # Override in config.ru if the instance is served under a subpath
       # e.g. for example.org/our-sequenceserver set to '/our-sequenceserver'
-      set :root_path_prefix, 'blast'
+      set :root_path_prefix, '/blast'
 
       set :search_layout, :'search_layout'
     end
