@@ -139,9 +139,6 @@ export class SearchQueryWidget extends Component {
 
     componentDidUpdate() {
         this.hideShowButton();
-        this.preProcessSequence();
-        this.props.onSequenceChanged(this.residuesCount());
-
         var type = this.type();
         if (!type || type !== this._type) {
             this._type = type;
