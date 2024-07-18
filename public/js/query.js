@@ -90,8 +90,9 @@ export class ReportQuery extends Component {
 export class SearchQueryWidget extends Component {
     constructor(props) {
         super(props);
+        this.sequence = this.getSequence();
         this.state = {
-            value: $('input#input_sequence').val() || ''
+            value: this.sequence
         };
         this.value = this.value.bind(this);
         this.clear = this.clear.bind(this);
