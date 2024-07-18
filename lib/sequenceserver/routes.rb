@@ -116,7 +116,7 @@ module SequenceServer
         erb :search, layout: settings.search_layout
       else
         job = Job.create(params)
-        redirect to("/#{job.id}")
+        redirect to("/blast/#{job.id}")
       end
     end
 
@@ -346,10 +346,10 @@ module SequenceServer
       {
         user_warning: 'LARGE_RESULT',
         download_links: [
-          { name: 'Standard Tabular Report', url: "download/#{jid}.std_tsv" },
-          { name: 'Full Tabular Report', url: "/download/#{jid}.full_tsv" },
-          { name: 'Results in XML', url: "/download/#{jid}.xml" },
-          { name: 'Pairwise', url: "/download/#{jid}.pairwise" },
+          { name: 'Standard Tabular Report', url: "/blast/download/#{jid}.std_tsv" },
+          { name: 'Full Tabular Report', url: "/blast/download/#{jid}.full_tsv" },
+          { name: 'Results in XML', url: "/blast/download/#{jid}.xml" },
+          { name: 'Pairwise', url: "/blast/download/#{jid}.pairwise" },
         ]
       }
     end
