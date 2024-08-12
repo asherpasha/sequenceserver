@@ -634,7 +634,12 @@ class HitsTable extends Component {
 				species = species.charAt(0).toUpperCase() + species.slice(1);
 			    }
 			}
+			
+			// Cacao sequences
 			species = species.replace(/_/, " ");
+			species = species.replace(/ sca/, " SCA");
+			species = species.replace(/ tc/, " TC");
+			species = species.replace(/ ccn/, " CCN");
                         return (
                             <tr key={hit.number}>
                                 <td className="text-left">{hit.number + '.'}</td>
