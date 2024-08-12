@@ -462,7 +462,7 @@ class HitsTable extends Component {
     }
 
     loadBarToolsInfo() {
-        $.getJSON(`../barTools.json`, function(data) {
+        $.getJSON(`https://bar.utoronto.ca/blast/barTools.json`, function(data) {
             this.setState({
                 tools:data
             });
@@ -541,16 +541,25 @@ class HitsTable extends Component {
             species='Triticum_aestivum';
         } else if (locus.includes('Sh')){
             newid=locus;
-            species='Saccharum'
+            species='Saccharum';
         } else if (locus.includes('VIT')){
             newid=locus.match(/[^.]+/);
-            species='Vitis'
+            species='Vitis';
         } else if (locus.startsWith('DN')){
             newid=locus.match(/[^.]+/);
-            species='Mangosteen'
+            species='Mangosteen';
         } else if (locus.includes('Ep_')){
             newid=locus.match(/[^.]+/);
-            species='Euphorbia'
+            species='Euphorbia';
+        } else if (locus.includes('SCA-')){
+            newid=locus.match(/[^.]+/);
+            species='Cacao_SCA';
+        } else if (locus.includes('CCN-')){
+            newid=locus.match(/[^.]+/);
+            species='Cacao_CCN';
+        } else if (locus.includes('Tc')){
+            newid=locus.match(/[^.]+/);
+            species='Cacao_TC';
         } else if (locus.includes('Thhalv')){
             if (locus.slice(-2)!='.g'){
                 newid=locus+'.g';
@@ -583,7 +592,7 @@ class HitsTable extends Component {
 
         // Width of sequence column is 55% when species name is not shown and
         // query coverage is.
-        var seqwidth = 55;
+        var seqwidth = 30;
         // If we are going to show species name, then reduce the width of
         // sequence column by the width of species column.
         if (hasName) seqwidth -= 15;
@@ -599,17 +608,33 @@ class HitsTable extends Component {
                 <th className="text-left">#</th>
                 <th width={`${seqwidth}%`}>Similar sequences</th>
                 {hasName && <th width="15%" className="text-left">Species</th>}
-                {!this.props.imported_xml && <th width="15%" className="text-right">Query coverage (%)</th>}
+                {!this.props.imported_xml && <th width="10%" className="text-right">Coverage (%)</th>}
                 <th width="10%" className="text-right">Total score</th>
                 <th width="10%" className="text-right">E value</th>
                 <th width="10%" className="text-right">Identity (%)</th>
-                <th colSpan={2} width="10%" className="text-right">BAR Tools</th>
+                <th colSpan={2} width="40%" className="text-right">BAR Tools</th>
             </tr>
             </thead>
             <tbody>
             {
                 _.map(this.props.query.hits, _.bind(function (hit) {
                         const barLinks=this.getBARLink(hit);
+			let species = ""
+			if (barLinks.length > 0) {
+			    let speciesList = barLinks[0].match(/eplant_(.*?)\//);
+
+			    if (speciesList == null) {
+				speciesList = barLinks[0].match(/efp_(.*?)\//);
+			    }
+
+			    if (speciesList == null) {
+				species = "Arabidopsis";
+			    } else {
+				species = speciesList[1];
+				species = species.charAt(0).toUpperCase() + species.slice(1);
+			    }
+			}
+			species = species.replace(/_/, " ");
                         return (
                             <tr key={hit.number}>
                                 <td className="text-left">{hit.number + '.'}</td>
@@ -636,9 +661,9 @@ class HitsTable extends Component {
                                     :barLinks.map((barLink,idx)=>
                                         barLink.includes('efpWeb')?
                                             <td colSpan={2/barLinks.length} className="text-center" key={`efp-${idx}`}>
-                                                <a href={barLink}>eFP</a>
+                                                <a href={barLink}>{species} eFP</a>
                                             </td>:<td colSpan={2/barLinks.length} className="text-center" key={`eplant-${idx}`}>
-                                                <a href={barLink}>ePlant</a>
+                                                <a href={barLink}>{species} ePlant</a>
                                             </td>
                                     )}
                             </tr>

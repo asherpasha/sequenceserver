@@ -1,7 +1,7 @@
 {
     "Arabidopsis_thaliana":{
         "eplant":"http://bar.utoronto.ca/eplant/?ActiveSpecies=Arabidopsis%20thaliana",
-        "efp":"http://bar.utoronto.ca/efp/cgi-bin/efpWeb.cgi?dataSource=Developmental_Map"
+        "efp":"http://bar.utoronto.ca/efp_arabidopsis/cgi-bin/efpWeb.cgi?dataSource=Developmental_Map"
     },
 
     "Brachypodium_distachyon":{
@@ -15,7 +15,7 @@
 
     "Populus_trichocarpa":{
         "eplant":"http://bar.utoronto.ca/eplant_poplar/?ActiveSpecies=Populus%20trichocarpa",
-        "efp":"http://bar.utoronto.ca/efppop/cgi-bin/efpWeb.cgi?dataSource=Poplar"
+        "efp":"http://bar.utoronto.ca/efp_poplar/cgi-bin/efpWeb.cgi?dataSource=Poplar"
     },
 
     "Solanum_lycopersicum":{
@@ -29,7 +29,7 @@
 
     "Glycine_max":{
         "eplant":"http://bar.utoronto.ca/eplant_soybean/?ActiveSpecies=Glycine%20max",
-        "efp":"http://bar.utoronto.ca/efpsoybean/cgi-bin/efpWeb.cgi?dataSource=soybean"
+        "efp":"http://bar.utoronto.ca/efp_soybean/cgi-bin/efpWeb.cgi?dataSource=soybean"
     },
 
     "Solanum_tuberosum":{
@@ -39,12 +39,12 @@
 
     "Hordeum_vulgare":{
         "eplant": "http://bar.utoronto.ca/eplant_barley/?ActiveSpecies=Hordeum%20vulgare",
-        "efp":"http://bar.utoronto.ca/efpbarley/cgi-bin/efpWeb.cgi?dataSource=barley_rma"
+        "efp":"http://bar.utoronto.ca/efp_barley/cgi-bin/efpWeb.cgi?dataSource=barley_rma"
     },
 
     "Medicago_truncatula":{
         "eplant":"http://bar.utoronto.ca/eplant_medicago/?ActiveSpecies=Medicago%20truncatula",
-        "efp":"http://bar.utoronto.ca/efpmedicago/cgi-bin/efpWeb.cgi?dataSource=medicago_mas"
+        "efp":"http://bar.utoronto.ca/efp_medicago/cgi-bin/efpWeb.cgi?dataSource=medicago_mas"
     },
 
     "Eucalyptus_grandis":{
@@ -53,7 +53,7 @@
 
     "Oryza_sativa":{
         "eplant":"http://bar.utoronto.ca/eplant_rice/?ActiveSpecies=Oryza%20sativa",
-        "efp":"http://bar.utoronto.ca/efprice/cgi-bin/efpWeb.cgi?dataSource=rice_mas"
+        "efp":"http://bar.utoronto.ca/efp_rice/cgi-bin/efpWeb.cgi?dataSource=rice_mas"
     },
 
     "Salix_purpurea":{
@@ -84,6 +84,17 @@
 
     "Eutrema":{
         "efp":"http://bar.utoronto.ca/efp_eutrema/cgi-bin/efpWeb.cgi?dataSource=Eutrema"
-    }
+    },
 
+    "Cacao_SCA":{
+        "efp":"http://bar.utoronto.ca/efp_cacao_sca/cgi-bin/efpWeb.cgi?dataSource=Meristem_Atlas"
+    },
+
+    "Cacao_TC":{
+        "efp":"http://bar.utoronto.ca/efp_cacao_tc/cgi-bin/efpWeb.cgi?dataSource=Cacao_Leaf"
+    },
+
+    "Cacao_CCN":{
+        "efp":"http://bar.utoronto.ca/efp_cacao_ccn/cgi-bin/efpWeb.cgi?dataSource=Drought_Diurnal_Atlas"
+    }
 }
